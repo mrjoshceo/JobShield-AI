@@ -3,6 +3,8 @@ import time
 import textwrap
 from pathlib import Path
 
+from PIL import Image
+
 import joblib
 import streamlit as st
 
@@ -15,6 +17,7 @@ PRODUCT_NAME = "JobShield AI"
 APP_VERSION = "1.0.0"
 MODEL_PATH = Path("svm_model.pkl")
 VECTORIZER_PATH = Path("tfidf_vectorizer.pkl")
+FAVICON_PATH = Path("jobshield_favicon.png")
 
 MIN_WORDS = 35
 MIN_UNIQUE_WORDS = 18
@@ -32,9 +35,16 @@ Applicants should have strong written and verbal communication skills, good atte
 # =========================================================
 # Page setup
 # =========================================================
+if not FAVICON_PATH.exists():
+    raise FileNotFoundError(
+        f"Missing favicon file: {FAVICON_PATH.name}. "
+        "Keep it in the same folder as app.py."
+    )
+
+PAGE_ICON = Image.open(FAVICON_PATH)
 st.set_page_config(
     page_title=f"{PRODUCT_NAME} | AI Job Fraud Detection",
-    page_icon="🛡️",
+    page_icon=PAGE_ICON,
     layout="wide",
     initial_sidebar_state="collapsed",
 )
