@@ -23,14 +23,47 @@ MIN_WORDS = 35
 MIN_UNIQUE_WORDS = 18
 MAX_CHARACTERS = 20_000
 
-SAMPLE_JOB = """Customer Support Specialist
+GENUINE_SAMPLE_JOB = """HR Assistant (Permanent)
 
-We are hiring a Customer Support Specialist to join our London team. The successful candidate will respond to customer enquiries by email and telephone, maintain accurate support records, and work with colleagues to resolve service issues.
+Squiz is one of the world's leading web solutions companies. We design, build and manage engaging websites and online applications using our Web Experience Management Suite, the Squiz Suite.
 
-Key responsibilities include managing support tickets, escalating technical issues, updating customer information, and helping improve the customer experience.
+Our clients include many household names and range from large global organisations to Government bodies and charities.
 
-Applicants should have strong written and verbal communication skills, good attention to detail, and confidence using common office software. Previous customer service experience is desirable. The successful applicant will receive a formal employment contract and complete the organisation's standard recruitment process."""
+We have an international network of offices in Australia, the UK, USA, New Zealand and Poland, and employ over 250 permanent members of staff.
+As a team, we are talented, motivated and enthusiastic. We live and breathe the web and our passion is finding new and innovative solutions using Squiz products alongside the latest web technologies.
 
+Our staff give 100% and are offered a high level of autonomy, responsibility and opportunity in return.
+
+Squiz is an Australian owned and now multinational software and professional services company in the web engagement space. Our team comprises around 300 full-time staff globally and our software is recognised by industry analysts as world class.
+
+We’re growing strongly (25% revenue growth in 2013), and our success in this highly competitive environment comes chiefly by attracting A-grade people, then engaging and empowering them to give their very best."""
+
+
+FRAUDULENT_SAMPLE_JOB = """Payroll Data Coordinator Positions – Earn $100–$200 Daily
+Location: Abbottstown, PA, USA
+
+
+We are a full-service marketing and staffing firm, serving companies ranging from Fortune 100 to new start-up organizations. We work with job seekers in an equally broad range, from light industrial temporary workers to executive level candidates.
+
+Are you looking for a Work from Home Opportunity where you can earn up to $2500 and more per week? Our Online Service Representative position would be perfect for you! Set your own hours, make money every time you decide to work, work remotely from home, get paid weekly, and if you have a computer with internet, this is for you.
+
+All you need is access to the Internet and you can participate. Computer with Internet access, valid email address, and good typing skills are required.
+This is an entry level position and we offer full online training. You do NOT need any special skills to get started. Earn as much as you can doing data entry. Complete Training provided before you start working and it’s easy to start!
+
+Don’t let this opportunity pass you by.
+
+POSITIONS ARE STILL AVAILABLE – GET STARTED RIGHT NOW
+
+If you fit the above description and meet the requirements, please apply stating your location.
+
+Apply at: #EMAIL_c9b5d8a60f3d80be13dd02ffe5d212c047b92ba679c296dfae7c102952fbb534#
+"""
+
+EXAMPLE_JOBS = {
+    "Choose an example": "",
+    "Sample genuine advert": GENUINE_SAMPLE_JOB,
+    "Sample fraudulent advert": FRAUDULENT_SAMPLE_JOB,
+}
 
 # =========================================================
 # Page setup
@@ -791,15 +824,24 @@ if "job_text" not in st.session_state:
 if "analysis_result" not in st.session_state:
     st.session_state.analysis_result = None
 
+if "example_choice" not in st.session_state:
+    st.session_state.example_choice = "Choose an example"
 
-def use_sample():
-    st.session_state.job_text = SAMPLE_JOB
+
+def load_selected_example():
+    selected_example = st.session_state.example_choice
+
+    if selected_example == "Choose an example":
+        return
+
+    st.session_state.job_text = EXAMPLE_JOBS[selected_example]
     st.session_state.analysis_result = None
 
 
 def clear_input():
     st.session_state.job_text = ""
     st.session_state.analysis_result = None
+    st.session_state.example_choice = "Choose an example"
 
 
 # =========================================================
@@ -941,14 +983,15 @@ with input_column:
             f'<div class="input-meta">{word_count:,} words · {len(job_text):,} characters</div>'
         )
 
-        sample_col, clear_col = st.columns(2)
+        example_col, clear_col = st.columns([1.35, 0.65])
 
-        with sample_col:
-            st.button(
-                "Try an example",
-                on_click=use_sample,
-                use_container_width=True,
-                type="secondary",
+        with example_col:
+            st.selectbox(
+                "Sample advertisements",
+                options=list(EXAMPLE_JOBS.keys()),
+                key="example_choice",
+                on_change=load_selected_example,
+                label_visibility="collapsed",
             )
 
         with clear_col:
